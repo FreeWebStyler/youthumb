@@ -10,11 +10,9 @@ https://addons.mozilla.org/en-US/firefox/addon/youthumb - there you can see scre
 
 ### Different versions
 
-For GreaseMonkey - with GM suffics (not available latest refactored version)
+For GreaseMonkey - with GM suffix (not available latest refactored version)
 
 And TamperMonkey - TM
-
-Ext - for external development - out of browser edit
 
 ### Get and Install
 
@@ -25,3 +23,7 @@ Click on desired script and then "Install" on https://openuserjs.org/users/FreeS
 Script depend on external jQuery distribution - check `@require` section.
 
 Currently there `https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js`, if script not work - firstable check this script avaliability!
+
+### Development
+
+With `Ext` suffix - script for external development - out of browser edit
