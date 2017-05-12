@@ -39,7 +39,7 @@
 
             if( (YouThumb[0].naturalWidth / YouThumb[0].naturalHeight) > 1.4) { // keep aspect ratio
                 YouThumb.attr('width', playerApi[0].offsetWidth);
-                YouThumb.attr('height', playerApi[0].offsetHeight-25);
+                YouThumb.attr('height', playerApi[0].offsetHeight); // -25
                  offval = 0;
             } else {
                 YouThumb.attr('width',  playerApi[0].offsetHeight + (playerApi[0].offsetHeight / 3));
