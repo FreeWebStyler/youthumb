@@ -1,16 +1,19 @@
 // ==UserScript==
-// @name         YouThumb! Greasemonkey version
+// @name         YouThumb! Tampermonkey version
 // @namespace    www.youtube.com/watch.youthumb
 // @version      0.4
 // @description  Show/hide YouTube thumbnail picture by button next to like/dislike buttons.
 // @author       zanygamer@gmail.com
+// @match        *www.youtube.com/*
 // @include      *www.youtube.com/*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
 
 function cl(m){console.log(m);}
-function ge(id){return document.getElementById(id);} function qs(id){return document.querySelector(id);}
+function ge(id){return document.getElementById(id);}
+function qs(id){return document.querySelector(id);}
+function qs(s){return document.querySelectorAll(s);}
 function op(obj){var str='';for(p in obj) str+='Property name:'+p+' value:'+obj[p]+'\n';return str;}
 function ol(obj) {var size = 0, key; for(key in obj) if(obj.hasOwnProperty(key)) size++; return size;}
 
@@ -21,7 +24,7 @@ var YouThumbExt = {
 
  ShowHideThumbnail:function(){ // when click on buttons or thumbnail
   var node=document.getElementById('YouThumb');
-  if(node==null){ // if thumb not exist
+  if(node == null){ // if thumb not exist
     var YouThumb = document.createElement("img"); // creating our Thumb picture that we need to show
     YouThumb.setAttribute("src", YouThumbExt.YouThumbImage);
     YouThumb.setAttribute("width", "0");
