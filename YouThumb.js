@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      0.6
+// @version      0.7
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       zanygamer@gmail.com
-// @match        *www.youtube.com/*
 // @include      *www.youtube.com/*
+// @match        *www.youtube.com/*
 // @grant        none
 // @run-at       document-end
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
@@ -18,17 +18,18 @@
     var t = { // translates
         show_thumb: { ru: "Показать миниатюру", en: "Show thumb" },
         hide_thumb: { ru: "Скрыть миниатюру", en: "Hide thumb" },
-        close_thumb: { ru: "Кликните, чтобы закрыть миниатюру", en: "Click to close thumbnail" }
+		close_thumb: { ru: "Кликните, чтобы закрыть миниатюру", en: "Click to close thumbnail" }
     };
 
     function cl(m){console.log(m);}
-    function qs(s){return document.querySelector(s);}
 
-    var imgSrc;
-    var LANG = navigator.language;
+    var imgSrc,
+        LANG = navigator.language,
+        $body = $('body'),
+    endvar;
     if(LANG == 'en-US') LANG = 'en';
     if(LANG == 'ru-RU') LANG = 'ru';
-
+      
     function ShowHideThumbnail(){ // when click on buttons or thumbnail
 
         var YouThumb = $('#YouThumb');
@@ -69,10 +70,20 @@
             YouThumb.remove();
             $('#movie_player').css('visibility','visible');
         }
-
+        
         if($('#YouThumbButton').length !== 0) return;
 
-        imgSrc = $('link[itemprop="thumbnailUrl"]')[0].href;
+        try {
+            imgSrc = $('link[itemprop="thumbnailUrl"]')[0].href;
+        }
+        catch(err) {
+            //alert(err.message);
+            cl($('link'));
+            var $body = $('body');
+            cl($body.find('link'));
+            cl($('link[itemprop="thumbnailUrl"]'));
+        }
+        
         //yt-uix-button yt-uix-button-hh-text
         $("<span><button id=YouThumbButton class='yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup  yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip'><img id=YouThumbImage src="+imgSrc+" width=18px height=18px /> "+t.show_thumb[LANG]+"</button></span>").appendTo($('.like-button-renderer')[0]);
 
@@ -86,22 +97,18 @@
     }
 
     var mocallback = function(mutationrecords){
-        if(/watch/i.test(location.href)) setTimeout(SetButton, 500);
+        if(/watch/i.test(location.href)) setTimeout(SetButton, 1000); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
     };
+    
+        //cl(typeof document.querySelector('title').nodeType);
 
-      //cl(qs('title'));
-
-      //cl(typeof document.querySelector('title').nodeType);
-      //cl(typeof qs('title').nodeType);
-      //cl(document.getElementById('eow-title').nodeType);
-      mo = new MutationObserver(mocallback);
-      options = {'childList': true};
-      //mo.observe(qs('head>title'), options);
-      mo.observe(qs('title'), options);
-      //mo.observe(document.title, options);
-      //mo.observe(document.getElementById('eow-title'), options);
-
-
+        //cl(document.getElementById('eow-title').nodeType);
+        mo = new MutationObserver(mocallback);
+        options = {'childList': true};
+        //mo.observe(qs('head>title'), options);
+        mo.observe($('title')[0], options);
+        //mo.observe(document.title, options);
+        //mo.observe(document.getElementById('eow-title'), options);
   });
 
 })(window.jQuery.noConflict(true));
