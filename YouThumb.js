@@ -90,8 +90,9 @@
             catch(err) {
                 //alert(err.message);                cl($('link'));                var $body = $('body');                cl($body.find('link'));      cl($('link[itemprop="thumbnailUrl"]'));
                 cl(err);
+                return;
             }
-            
+            clearInterval(setButtonInterval);
             //cl(imgSrc);            
             //yt-uix-button yt-uix-button-hh-text
             $('<span><button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup  yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><img id=YouThumbImage src="'+imgSrc+'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+ t.show_thumb[LANG] +'</button></span>').appendTo($('.like-button-renderer')[0]);
@@ -102,7 +103,7 @@
                  var YouThumbImg = document.createElement("img"); // creating our Thumb picture that we need to show
                   YouThumbImg.setAttribute("src",links);
                   if((YouThumbImg.naturalWidth==120 && YouThumbImg.naturalHeight==90) || YouThumbImg.naturalWidth==0) links = links.replace(/maxres/,'hq');
-           if(YouThumbExt.YouThumbImage!=links) YouThumbExt.YouThumbImage=links;*/
+           if(YouThumbExt.YouThumbImage!=links) YouThumbExt.YouThumbImage=links;*/           
         }
 
         function mocallback(mutationrecords){
