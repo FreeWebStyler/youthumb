@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      0.8
+// @version      0.9
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       zanygamer@gmail.com
-// @include      *youtube.com/watch*
-// @match        *youtube.com/watch*
+// @include      *youtube.com/*
+// @match        *youtube.com/*
 // @grant        none
 // @run-at       document-end
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
@@ -23,7 +23,7 @@
                 close_thumb: { ru: "Кликните, чтобы закрыть миниатюру", en: "Click to close thumbnail" }
             },
             cl = function(m){console.log(m);},
-            isset = function (e){ return typeof e != 'undefined' ? true : false;},
+            isset = function (e){ return typeof e == 'undefined' ? false : true;},
             trys = 0,
             setButtonInterval,
             imgSrc,
@@ -95,9 +95,9 @@
             var YouThumb = $('#YouThumb');
             var YouThumbButton = $('#YouThumbButton');
             
-            if(YouThumb.length !== 0){
-                YouThumb.remove();
-                $('#movie_player').css('visibility','visible');
+            if(YouThumb.length !== 0){//                YouThumb.remove();
+                ShowHideThumbnail();
+                $('#movie_player').css('visibility','visible');                
             }
 
             if(YouThumbButton.length !== 0){ clearInterval(setButtonInterval); return; }
@@ -140,13 +140,20 @@
 
         function mocallback(mutationrecords){
             //if(/watch/i.test(location.href)) setTimeout(SetButton, 2000); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
+            if($('title').html() == title || !/watch/i.test(location.href)) return;
             setButtonInterval = setInterval(SetButton, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
-        }
+        } //if(!/watch/i.test(location.href)) return;
+        var title = $('title'); //cl(title); cl(title[0]); cl(isset(title));
+        
+        if(!isset(title[0])) return;
+        var title_content = title.html();
+        //cl(typeof document.querySelector('title').nodeType);document.getElementById('eow-title').nodeType);
+        //cl(mocallback);
+        var mo = new MutationObserver(mocallback);
+        var options = {'childList': true}; //mo.observe(qs('head>title'), options); //cl(title[0]);
+        cl(title);
+        mo.observe(title[0], options); //mo.observe(document.title, options);
+        //mo.observe(document.getElementById('eow-title'), options);
 
-            //cl(typeof document.querySelector('title').nodeType);document.getElementById('eow-title').nodeType);
-            var mo = new MutationObserver(mocallback);
-            var options = {'childList': true};            //mo.observe(qs('head>title'), options);
-            mo.observe($('title')[0], options);            //mo.observe(document.title, options);
-            //mo.observe(document.getElementById('eow-title'), options);
     });
 })(window.jQuery.noConflict(true));
