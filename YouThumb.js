@@ -142,17 +142,23 @@
             //if(/watch/i.test(location.href)) setTimeout(SetButton, 2000); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
             if($('title').html() == title || !/watch/i.test(location.href)) return;
             setButtonInterval = setInterval(SetButton, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
-        } //if(!/watch/i.test(location.href)) return;
-        var title = $('title'); //cl(title); cl(title[0]); cl(isset(title));
+        }
+        
+        //if(!/watch/i.test(location.href)) return;
+        var title = $('title');
+        //cl(title);
+        //cl(title[0]);
+        //cl(isset(title));
         
         if(!isset(title[0])) return;
         var title_content = title.html();
         //cl(typeof document.querySelector('title').nodeType);document.getElementById('eow-title').nodeType);
         //cl(mocallback);
         var mo = new MutationObserver(mocallback);
-        var options = {'childList': true}; //mo.observe(qs('head>title'), options); //cl(title[0]);
+        var options = {'childList': true};            //mo.observe(qs('head>title'), options);
+        //cl(title[0]);
         cl(title);
-        mo.observe(title[0], options); //mo.observe(document.title, options);
+        mo.observe(title[0], options);            //mo.observe(document.title, options);
         //mo.observe(document.getElementById('eow-title'), options);
 
     });

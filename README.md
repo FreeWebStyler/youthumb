@@ -2,7 +2,7 @@
 
 Show YouTube thumbnail picture by button, near likes buttons.
 
-Current version - 0.5
+Current version - 0.9
 
 Duplicate my FireFox add-on `YouThumb`:
 
