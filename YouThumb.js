@@ -12,6 +12,12 @@
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
 // ==/UserScript==
 
+/*
+    Videos for testing:
+        https://www.youtube.com/watch?v=SgEsf4QcR0Q - all resolutions
+        https://www.youtube.com/watch?v=y0OzPjlJHzM - only hqdefautl
+*/
+
 (function ($, undefined) {
     $(function () {
 
