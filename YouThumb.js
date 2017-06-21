@@ -75,7 +75,6 @@
 
         function getWidths(){
             count++;
-            cl(count);
             //if(count > maxCount) return;
             $('body').append(
                 '<img id=YouThumb_sd_imgSrc src="'+ imgBase+images[1] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>'+
@@ -111,8 +110,6 @@
 
         function SetButton(){
 
-            cl(111);
-
             var YouThumb = $('#YouThumb');
             var YouThumbButton = $('#YouThumbButton');
 
@@ -143,7 +140,6 @@
 
             YouThumbButton = $('#YouThumbButton');
             YouThumbButton.on('click', ShowHideThumbnail);
-            cl(555);
             getWidths();
         }
 
