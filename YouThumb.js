@@ -26,14 +26,16 @@
             isset = function (e){ return typeof e == 'undefined' ? false : true;},
             trys = 0,
             setButtonInterval,
+            imgBase,
             imgSrc,
-            other_imgSrc,
+            images = ['maxresdefault.jpg', 'sddefault.jpg', 'hqdefault.jpg'],
+            maxCount = 25,
+            count = 0,
             LANG = navigator.language,
             $body = $('body'),
             bp_width = '32px',
             bp_height = '20px',
-            width = 0,
-            other_width = 0,
+            widthes = [0, 0, 0],
         endvar;
 
         if(LANG == 'en-US') LANG = 'en';
@@ -72,28 +74,45 @@
         }
 
         function getWidths(){
+            count++;
+            cl(count);
+            //if(count > maxCount) return;
+            $('body').append(
+                '<img id=YouThumb_sd_imgSrc src="'+ imgBase+images[1] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>'+
+                '<img id=YouThumb_max_imgSrc src="'+ imgBase+images[0] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>');
 
-            if(width == 0){
-                let YouThumbImage = $('#YouThumbImage');
-                width = YouThumbImage[0].naturalWidth;
-            }
+            widthes[2] = $('#YouThumbImage')[0].naturalWidth;
+            widthes[1] = $('#YouThumb_sd_imgSrc')[0].naturalWidth;
+            widthes[0] = $('#YouThumb_max_imgSrc')[0].naturalWidth;
 
-            if(other_width == 0){
-                other_width = $('#YouThumb_other_imgSrc')[0].naturalWidth;
-            }
+            var maxWidth = 0;
+            var maxWidthI = 2;
 
-            if(width != 0 && other_width != 0){
-                if(other_width > width){
-                    imgSrc = other_imgSrc;
-                    YouThumbImage.src = imgSrc;
+            var ret = 0;
+
+            for(let i = 0; i < widthes.length; i++){
+                if(widthes[i] == 0 && count < maxCount){
+                        setTimeout(getWidths, 500);
+                        return;
                 }
+                if(widthes[i] > maxWidth){ maxWidth = widthes[i]; maxWidthI = i; }
+            }
+
+            let maxSrc = imgBase+images[maxWidthI];
+
+            if(imgSrc != maxSrc){
+                imgSrc = maxSrc;
+                YouThumbImage.src = imgSrc;
                 return;
             }
 
-            setTimeout(getWidths, 500);
+            //setTimeout(getWidths, 500);
         }
 
         function SetButton(){
+
+            cl(111);
+
             var YouThumb = $('#YouThumb');
             var YouThumbButton = $('#YouThumbButton');
 
@@ -104,35 +123,33 @@
 
             if(YouThumbButton.length !== 0){ clearInterval(setButtonInterval); return; }
 
-            width = 0;
-            other_width = 0;
-
             try {
-                other_imgSrc = $('#watch7-content > link[itemprop="thumbnailUrl"]')[0].href;
-                imgSrc = other_imgSrc.replace('hq', 'sd');
+                imgBase = $('#watch7-content > link[itemprop="thumbnailUrl"]')[0].href;
+                imgBase = imgBase.split('/');
+                delete imgBase[imgBase.length-1];
+                imgBase = imgBase.join('/');
             }
             catch(err) {
                 //alert(err.message);                cl($('link'));                var $body = $('body');                cl($body.find('link'));      cl($('link[itemprop="thumbnailUrl"]'));
-                //cl(err);
+                cl(err);
                 return;
             }
 
             clearInterval(setButtonInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
 
+            imgSrc = imgBase+images[2];
+            //cl(imgSrc);
             $('<span><button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><img id=YouThumbImage src="'+ imgSrc +'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+ t.show_thumb[LANG] +'</button></span>').appendTo($('.like-button-renderer')[0]);
 
             YouThumbButton = $('#YouThumbButton');
             YouThumbButton.on('click', ShowHideThumbnail);
-
-            if(other_imgSrc != imgSrc) {
-                $('body').append('<img id=YouThumb_other_imgSrc src="'+ other_imgSrc +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>');
-                other_width = $('#YouThumb_other_imgSrc')[0].naturalWidth;
-                getWidths();
-            }
+            cl(555);
+            getWidths();
         }
 
         function mocallback(mutationrecords){
             if($('title').html() == title || !/watch/i.test(location.href)) return;
+            count = 0;
             setButtonInterval = setInterval(SetButton, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
         }
 
