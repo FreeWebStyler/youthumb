@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      0.9
+// @version      1.0
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       zanygamer@gmail.com
@@ -47,12 +47,12 @@
                 playerApi.prepend('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
                 YouThumb = $('#YouThumb');
                 YouThumb.on('click', ShowHideThumbnail);
-                
+
                 var offval = 0;
-                
+
                 if((YouThumb[0].naturalWidth / YouThumb[0].naturalHeight) > 1.4) { // keep aspect ratio
                     YouThumb.attr('width', playerApi[0].offsetWidth);
-                    YouThumb.attr('height', playerApi[0].offsetHeight); //-25                    
+                    YouThumb.attr('height', playerApi[0].offsetHeight); //-25
                 } else {
                     YouThumb.attr('width',  playerApi[0].offsetHeight + (playerApi[0].offsetHeight / 3));
                     YouThumb.attr('height', playerApi[0].offsetHeight);
@@ -72,43 +72,42 @@
         }
 
         function getWidths(){
-            
+
             if(width == 0){
                 let YouThumbImage = $('#YouThumbImage');
                 width = YouThumbImage[0].naturalWidth;
-            }            
-            
+            }
+
             if(other_width == 0){
                 other_width = $('#YouThumb_other_imgSrc')[0].naturalWidth;
             }
-            
+
             if(width != 0 && other_width != 0){
-                if(other_width > width) imgSrc = other_imgSrc;
+                if(other_width > width){
+                    imgSrc = other_imgSrc;
+                    YouThumbImage.src = imgSrc;
+                }
                 return;
             }
-  
-            setTimeout(getWidths, 500);       
+
+            setTimeout(getWidths, 500);
         }
-        
-        function SetButton(){ //if(document.getElementById("YouThumbButton")!==null) return;
-            //let params = (new URL(document.location)).searchParams;            let v = params.get('v');
+
+        function SetButton(){
             var YouThumb = $('#YouThumb');
             var YouThumbButton = $('#YouThumbButton');
-            
-            if(YouThumb.length !== 0){//                YouThumb.remove();
+
+            if(YouThumb.length !== 0){// YouThumb.remove();
                 ShowHideThumbnail();
-                $('#movie_player').css('visibility','visible');                
+                $('#movie_player').css('visibility','visible');
             }
 
             if(YouThumbButton.length !== 0){ clearInterval(setButtonInterval); return; }
-            
+
             width = 0;
             other_width = 0;
-            
-            //if(isset(button.v)) return;
+
             try {
-                //imgSrc = $('link[itemprop="thumbnailUrl"]')[0].href;
-                //imgSrc = $('#watch7-content').find('link[itemprop="thumbnailUrl"]')[0].href;
                 other_imgSrc = $('#watch7-content > link[itemprop="thumbnailUrl"]')[0].href;
                 imgSrc = other_imgSrc.replace('hq', 'sd');
             }
@@ -119,47 +118,31 @@
             }
 
             clearInterval(setButtonInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
-            
+
             $('<span><button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><img id=YouThumbImage src="'+ imgSrc +'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+ t.show_thumb[LANG] +'</button></span>').appendTo($('.like-button-renderer')[0]);
-            
+
             YouThumbButton = $('#YouThumbButton');
             YouThumbButton.on('click', ShowHideThumbnail);
-            
+
             if(other_imgSrc != imgSrc) {
                 $('body').append('<img id=YouThumb_other_imgSrc src="'+ other_imgSrc +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>');
                 other_width = $('#YouThumb_other_imgSrc')[0].naturalWidth;
                 getWidths();
             }
-
-            /*<link itemprop="thumbnailUrl" href="https://i.ytimg.com/vi/8FOBxcluXdk/maxresdefault.jpg">
-                 var YouThumbImg = document.createElement("img"); // creating our Thumb picture that we need to show
-                  YouThumbImg.setAttribute("src",links);
-                  if((YouThumbImg.naturalWidth==120 && YouThumbImg.naturalHeight==90) || YouThumbImg.naturalWidth==0) links = links.replace(/maxres/,'hq');
-           if(YouThumbExt.YouThumbImage!=links) YouThumbExt.YouThumbImage=links;*/
         }
 
         function mocallback(mutationrecords){
-            //if(/watch/i.test(location.href)) setTimeout(SetButton, 2000); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
             if($('title').html() == title || !/watch/i.test(location.href)) return;
             setButtonInterval = setInterval(SetButton, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
         }
-        
-        //if(!/watch/i.test(location.href)) return;
+
         var title = $('title');
-        //cl(title);
-        //cl(title[0]);
-        //cl(isset(title));
-        
+
         if(!isset(title[0])) return;
         var title_content = title.html();
-        //cl(typeof document.querySelector('title').nodeType);document.getElementById('eow-title').nodeType);
-        //cl(mocallback);
         var mo = new MutationObserver(mocallback);
-        var options = {'childList': true};            //mo.observe(qs('head>title'), options);
-        //cl(title[0]);
-        cl(title);
-        mo.observe(title[0], options);            //mo.observe(document.title, options);
+        var options = {'childList': true};
+        mo.observe(title[0], options); //mo.observe(document.title, options); mo.observe(qs('head>title'), options);
         //mo.observe(document.getElementById('eow-title'), options);
-
     });
 })(window.jQuery.noConflict(true));
