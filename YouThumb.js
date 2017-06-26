@@ -38,7 +38,7 @@
             trys = 0,
             setButtonInterval,
             imgBase,
-            imgSrc,
+            defaultImgSrc = 0,
             images = ['maxresdefault.jpg', 'sddefault.jpg', 'hqdefault.jpg'],
             maxCount = 25,
             count = 0,
@@ -53,7 +53,8 @@
         if(LANG == 'ru-RU') LANG = 'ru';
 
         function ShowHideThumbnail(event){ // when click on buttons or thumbnail
-            if(event.target.nodeName == 'span') imgSrc = 'YouThumb_'+ images[0] +'_imgSrc'; else imgSrc = event.target.src;
+ 
+            var imgSrc = event.target.nodeName == 'SPAN' ? defaultImgSrc : event.target.src;
             var YouThumb = $('#YouThumb');
             var playerApi = $('#player-api');
 
@@ -97,6 +98,8 @@
             for(let i = 0; i < widthes.length; i++){
                 if(widthes[i] == 0){ setTimeout(getWidths, 500); return;}
                 if(widthes[i] > 120){
+                    if(!defaultImgSrc) defaultImgSrc = imgBase+images[i];
+                    cl(defaultImgSrc);
                     to_insert+= ' <img class=YouThumbButtonImage src="'+ imgBase+images[i] +'" style="width:'+ bp_width +';height:'+ bp_height +'"/>';
                 }
             }
@@ -129,7 +132,7 @@
 
             clearInterval(setButtonInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
 
-            imgSrc = imgBase+images[2]; //cl(imgSrc);
+            //imgSrc = imgBase+images[2]; //cl(imgSrc);
             $('<button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><span id=YouThumbStatus>'+ t.show_thumb[LANG] +' </span> </button>').appendTo($('.like-button-renderer')[0]);
             $('body').on('click', '.YouThumbButtonImage', ShowHideThumbnail);
             $('body').on('click', '#YouThumbStatus', ShowHideThumbnail);
