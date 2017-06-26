@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      1.1
+// @version      1.0
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       zanygamer@gmail.com
@@ -11,6 +11,8 @@
 // @run-at       document-end
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
 // ==/UserScript==
+
+// This old verion with inly one thumb tho show - biggest
 
 /*
     Videos for testing:
@@ -52,8 +54,7 @@
         if(LANG == 'en-US') LANG = 'en';
         if(LANG == 'ru-RU') LANG = 'ru';
 
-        function ShowHideThumbnail(event){ // when click on buttons or thumbnail
-            if(event.target.nodeName == 'span') imgSrc = 'YouThumb_'+ images[0] +'_imgSrc'; else imgSrc = event.target.src;
+        function ShowHideThumbnail(){ // when click on buttons or thumbnail
             var YouThumb = $('#YouThumb');
             var playerApi = $('#player-api');
 
@@ -74,39 +75,55 @@
                 }
 
                 YouThumb.css('left', parseInt(YouThumb.css('left'))+ offval +'px');
-                $('#YouThumbStatus').html(t.hide_thumb[LANG]);
+                $('#YouThumbButton').html('<img id=YouThumbImage src="'+ imgSrc +'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+ t.hide_thumb[LANG]);
                 $('#movie_player').css('visibility','hidden');
 
             } else { // if thumb exist need to remove thumbnail
 
-                $('#YouThumbStatus').html(t.show_thumb[LANG]);
+                $('#YouThumbButton').html('<img id=YouThumbImage src="'+ imgSrc +'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+t.show_thumb[LANG]);
                 YouThumb.remove();
                 $('#movie_player').css('visibility','visible');
             }
         }
 
         function getWidths(){
-            count++; if(count > maxCount){ cl('LIMIT'); return; }            
-            for(let i = 0; i < images.length; i++){
-                let img = document.getElementById('YouThumb_'+ images[i] +'_imgSrc');
-                if(!img){ setTimeout(getWidths, 500); return; }
-                widthes[i] = img.naturalWidth;
-            };
-            
-            let to_insert = '';
+            count++;
+            //if(count > maxCount) return;
+            $('body').append(
+                '<img id=YouThumb_sd_imgSrc src="'+ imgBase+images[1] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>'+
+                '<img id=YouThumb_max_imgSrc src="'+ imgBase+images[0] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>');
+
+            widthes[2] = $('#YouThumbImage')[0].naturalWidth;
+            widthes[1] = $('#YouThumb_sd_imgSrc')[0].naturalWidth;
+            widthes[0] = $('#YouThumb_max_imgSrc')[0].naturalWidth;
+
+            var maxWidth = 0;
+            var maxWidthI = 2;
+
+            var ret = 0;
+
             for(let i = 0; i < widthes.length; i++){
-                if(widthes[i] == 0){ setTimeout(getWidths, 500); return;}
-                if(widthes[i] > 120){
-                    to_insert+= ' <img class=YouThumbButtonImage src="'+ imgBase+images[i] +'" style="width:'+ bp_width +';height:'+ bp_height +'"/>';
+                if(widthes[i] == 0 && count < maxCount){
+                        setTimeout(getWidths, 500);
+                        return;
                 }
+                if(widthes[i] > maxWidth){ maxWidth = widthes[i]; maxWidthI = i; }
             }
-            $('#YouThumbButton').append(to_insert);
+
+            let maxSrc = imgBase+images[maxWidthI];
+
+            if(imgSrc != maxSrc){
+                imgSrc = maxSrc;
+                YouThumbImage.src = imgSrc;
+                return;
+            }
+            //setTimeout(getWidths, 500);
         }
 
         function SetButton(){
 
             var YouThumb = $('#YouThumb');
-            var YouThumbButton = $('.YouThumbButton');
+            var YouThumbButton = $('#YouThumbButton');
 
             if(YouThumb.length !== 0){// YouThumb.remove();
                 ShowHideThumbnail();
@@ -129,17 +146,12 @@
 
             clearInterval(setButtonInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
 
-            imgSrc = imgBase+images[2]; //cl(imgSrc);
-            $('<button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><span id=YouThumbStatus>'+ t.show_thumb[LANG] +' </span> </button>').appendTo($('.like-button-renderer')[0]);
-            $('body').on('click', '.YouThumbButtonImage', ShowHideThumbnail);
-            $('body').on('click', '#YouThumbStatus', ShowHideThumbnail);
-            
-            var images_to_insert = '';
-            for(let i = 0; i < images.length; i++){
-                images_to_insert+=
-                    '<img id=YouThumb_'+ images[i] +'_imgSrc src="'+ imgBase+images[i] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>';
-            }
-            $('body').append(images_to_insert);
+            imgSrc = imgBase+images[2];
+            //cl(imgSrc);
+            $('<span><button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><img id=YouThumbImage src="'+ imgSrc +'" style="width:'+ bp_width +';height:'+ bp_height +'"/> '+ t.show_thumb[LANG] +'</button></span>').appendTo($('.like-button-renderer')[0]);
+
+            YouThumbButton = $('#YouThumbButton');
+            YouThumbButton.on('click', ShowHideThumbnail);
             getWidths();
         }
 
