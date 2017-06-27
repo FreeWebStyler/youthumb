@@ -19,8 +19,7 @@
         https://www.youtube.com/watch?v=8Zy9InnJ4-Y&index=11&list=PLzPivwyXljVV100GMKcQAekdThrN2z6DQ
 
     TODO
-        Some videos have different thumbnails for different resolutions!
-        Need check all of them and if they are not 120x90 than show all near button
+        Show thumbs not only on watch page
 */
 
 (function ($, undefined) {
@@ -53,12 +52,13 @@
         if(LANG == 'ru-RU') LANG = 'ru';
 
         function ShowHideThumbnail(event){ // when click on buttons or thumbnail
- 
-            var imgSrc = event.target.nodeName == 'SPAN' ? defaultImgSrc : event.target.src;
+            
             var YouThumb = $('#YouThumb');
             var playerApi = $('#player-api');
+            
+            if(event){ var imgSrc = event.target.nodeName == 'SPAN' ? defaultImgSrc : event.target.src; }
 
-            if(YouThumb.length === 0){
+            if(YouThumb.length == 0){
                 playerApi.prepend('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
                 YouThumb = $('#YouThumb');
                 YouThumb.on('click', ShowHideThumbnail);
@@ -79,7 +79,10 @@
                 $('#movie_player').css('visibility','hidden');
 
             } else { // if thumb exist need to remove thumbnail
-
+            
+                if($('#YouThumb')[0].src != imgSrc){
+                    $('#YouThumb')[0].src = imgSrc; return;
+                }
                 $('#YouThumbStatus').html(t.show_thumb[LANG]);
                 YouThumb.remove();
                 $('#movie_player').css('visibility','visible');
