@@ -16,6 +16,7 @@
     Videos for testing
         https://www.youtube.com/watch?v=SgEsf4QcR0Q - all resolutions
         https://www.youtube.com/watch?v=y0OzPjlJHzM - only hqdefautl
+        https://www.youtube.com/watch?v=ZckOGWOYfFA - WO maxres
         https://www.youtube.com/watch?v=8Zy9InnJ4-Y&index=11&list=PLzPivwyXljVV100GMKcQAekdThrN2z6DQ - Jump over playlist
     
     TODO
