@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      1.3
+// @version      1.4
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       zanygamer@gmail.com
@@ -19,6 +19,8 @@
         https://www.youtube.com/watch?v=ZckOGWOYfFA - WO maxres
         https://www.youtube.com/watch?v=8Zy9InnJ4-Y&index=11&list=PLzPivwyXljVV100GMKcQAekdThrN2z6DQ - Jump over playlist
 
+        https://www.youtube.com/watch?v=oJtV-vVkQYI - from this to this https://www.youtube.com/watch?v=Gug8WIu5cPE
+        https://www.youtube.com/watch?v=bwy2HnmQoFo&t=250s
     TODO
         Show thumbs not only on watch page
 */
@@ -31,12 +33,13 @@
         var t = { // translates
             show_thumb: { ru: "Показать миниатюру", en: "Show thumb" },
             hide_thumb: { ru: "Скрыть миниатюру", en: "Hide thumb" },
+            show_hide_thumb: { ru: "Показать / скрыть миниатюру", en: "Show / hide thumb" },
             close_thumb: { ru: "Кликните, чтобы закрыть миниатюру", en: "Click to close thumbnail" }
         },
         cl = function(m){console.log(m);},
         isset = function (e){ return typeof e == 'undefined' ? false : true;},
         trys = 0,
-        setButtonInterval,
+        setImages,
         imgBase,
         defaultImgSrc = 0,
         imgSrc = null,
@@ -48,6 +51,7 @@
         bp_width = '32px',
         bp_height = '20px',
         widthes = [0, 0, 0],
+        setImagesInterval,
         endvar;
 
         if(LANG == 'en-US') LANG = 'en';
@@ -60,7 +64,7 @@
 
             playerApi.prepend('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
             YouThumb = $('#YouThumb');
-            YouThumb.on('click', ShowHideThumbnail);
+            YouThumb.on('click', showHideThumbnail);
 
             var offval = 0;
 
@@ -84,7 +88,7 @@
             $('#movie_player').css('visibility','visible');
         }
 
-        function ShowHideThumbnail(event){ // when click on buttons or thumbnail
+        function showHideThumbnail(event){ // when click on buttons or thumbnail
 
             var YouThumb = $('#YouThumb');
 
@@ -92,7 +96,7 @@
 
             if(YouThumb.length !== 0 && event && event.target.nodeName == 'SPAN'){ hideThumbnail(); return; }
 
-            if(YouThumb.length == 0 || (YouThumb.length !== 0 && $('#YouThumb')[0].src != imgSrc)){
+            if(YouThumb.length === 0 || (YouThumb.length !== 0 && $('#YouThumb')[0].src != imgSrc)){
 
                 if(YouThumb.length !== 0) YouThumb.remove();
                 showThumbnail();
@@ -100,33 +104,35 @@
             } else hideThumbnail();
         }
 
-        function getWidths(){
+        function getWidths_setButton(){
             count++; if(count > maxCount){ cl('LIMIT'); return; }
             for(let i = 0; i < images.length; i++){
                 let img = document.getElementById('YouThumb_'+ images[i] +'_imgSrc');
-                if(!img){ setTimeout(getWidths, 500); return; }
-                widthes[i] = img.naturalWidth;
+                if(!img && count < maxCount){ setTimeout(getWidths_setButton, 500); return; }
+                if(img) widthes[i] = img.naturalWidth;
             };
 
             let to_insert = '';
             for(let i = 0; i < widthes.length; i++){
-                if(widthes[i] == 0){ setTimeout(getWidths, 500); return;}
+                if(widthes[i] === 0 && count < maxCount){ setTimeout(getWidths_setButton, 500); return;}
                 if(widthes[i] > 120){
                     if(!defaultImgSrc) defaultImgSrc = imgBase+images[i];//                    cl(defaultImgSrc);
                     to_insert+= ' <img class=YouThumbButtonImage src="'+ imgBase+images[i] +'" style="width:'+ bp_width +';height:'+ bp_height +'"/>';
                 }
             }
+
+            $('<button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><span id=YouThumbStatus>'+ t.show_thumb[LANG] +' </span></button>').appendTo($('.like-button-renderer')[0]);
             $('#YouThumbButton').append(to_insert);
         }
 
-        function SetButton(){
+        function setImages(){
 
             var YouThumb = $('#YouThumb');
             var YouThumbButton = $('#YouThumbButton');
 
             if(YouThumb.length !== 0) hideThumbnail(); // YouThumb.remove();                ShowHideThumbnail();
                 //$('#movie_player').css('visibility','visible');
-            if(YouThumbButton.length !== 0){ clearInterval(setButtonInterval); return; }
+            if(YouThumbButton.length !== 0){ clearInterval(setImagesInterval); return; }
 
             try {
                 imgBase = $('#watch7-content > link[itemprop="thumbnailUrl"]')[0].href;
@@ -140,25 +146,24 @@
                 return;
             }
 
-            clearInterval(setButtonInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
+            clearInterval(setImagesInterval); //cl(imgSrc);  //yt-uix-button yt-uix-button-hh-text
 
             //imgSrc = imgBase+images[2]; //cl(imgSrc);
-            $('<button id=YouThumbButton class="yt-uix-button yt-uix-button-size-default yt-uix-button-opacity yt-uix-button-has-icon no-icon-markup yt-uix-button-toggled yt-uix-post-anchor yt-uix-tooltip"><span id=YouThumbStatus>'+ t.show_thumb[LANG] +' </span> </button>').appendTo($('.like-button-renderer')[0]);
 
             var images_to_insert = '';
             for(let i = 0; i < images.length; i++){
                 images_to_insert+=
-                '<img id=YouThumb_'+ images[i] +'_imgSrc src="'+ imgBase+images[i] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>';
+                '<img id=YouThumb_'+ images[i] +'_imgSrc src="'+ imgBase+images[i] +'" data-tooltip-text="'+ t.show_hide_thumb[LANG] +'" style=position:absolute;top:-50px;left:-50px;width:1px;height:1px>';
             }
             $('body').append(images_to_insert);
-            getWidths();
+            getWidths_setButton();
         }
 
         function mocallback(mutationrecords){
             if($('title').html() == title || !/watch/i.test(location.href)) return;
             count = 0;
             defaultImgSrc = 0;
-            setButtonInterval = setInterval(SetButton, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
+            setImagesInterval = setInterval(setImages, 500); // TODO launch every 200 msecs. while element link[itemprop="thumbnailUrl"] not be found, and no more than 50 times!
         }
 
         var title = $('title');
@@ -170,8 +175,8 @@
         mo.observe(title[0], options); //mo.observe(document.title, options); mo.observe(qs('head>title'), options);
         //mo.observe(document.getElementById('eow-title'), options);
 
-        $('body').on('click', '.YouThumbButtonImage', ShowHideThumbnail);
-        $('body').on('click', '#YouThumbStatus', ShowHideThumbnail);
+        $('body').on('click', '.YouThumbButtonImage', showHideThumbnail);
+        $('body').on('click', '#YouThumbStatus', showHideThumbnail);
 
     });
 })(window.jQuery.noConflict(true));
