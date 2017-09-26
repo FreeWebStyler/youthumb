@@ -50,7 +50,6 @@
             cl = function(m){console.log(m);},
             isset = function (e){ return typeof e == 'undefined' ? false : true;},
             trys = 0,
-            setImages,
             imgBase,
             defaultImgSrc = 0,
             imgSrc = null,
@@ -88,7 +87,7 @@
             //$('#player-container').css({backgroundImage: 'url('+ imgSrc +')', backgroundSize: 'cover'});
 
             playerApi.prepend('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
-            var $YouThumb = $('#YouThumb');
+
             $YouThumb.on('click', removeThumbnail);
 
             //cl($YouThumb[0].naturalWidth);            cl($YouThumb[0].naturalHeight);
@@ -140,7 +139,7 @@
                     setTimeout(getWidths_setButton, 500);
                 }
                 else widthes[i] = $img[0].naturalWidth;
-            };
+            }
 
             let to_insert = '';
             for(let i = 0; i < widthes.length; i++){
