@@ -78,17 +78,15 @@
             //cl('setThumbnail');
             thumb_display = true;
             last_src = imgSrc;
-            var $YouThumb = $('#YouThumb');
-            var $YouThumb_exist = $YouThumb.length === 0 ? false : true;
 
             var playerApi = $('#player-container');
             var width  = playerApi[0].offsetWidth;
             var height = playerApi[0].offsetHeight;
             //$('#player-container').css({backgroundImage: 'url('+ imgSrc +')', backgroundSize: 'cover'});
 
-            playerApi.prepend('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
-
+            var $YouThumb = $('<img title="'+ t.close_thumb[LANG] +'" id=YouThumb src='+ imgSrc +' style=position:absolute;z-index:999>');
             $YouThumb.on('click', removeThumbnail);
+            playerApi.prepend($YouThumb);
 
             //cl($YouThumb[0].naturalWidth);            cl($YouThumb[0].naturalHeight);
             var offval = 0;
