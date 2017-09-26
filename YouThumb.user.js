@@ -6,7 +6,8 @@
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       FreeStyler
 // @supportURL   zanygamer@gmail.com
-// @updateURL    https://openuserjs.org/meta/FreeStyler/YouThumb.user.js
+// @updateURL    https://openuserjs.org/meta/FreeStyler/YouThumb!_YouTube_thumbnails_showing.meta.js
+// @downloadURL  https://openuserjs.org/install/FreeStyler/YouThumb!_YouTube_thumbnails_showing.user.js
 // @include      *youtube.com/*
 // @match        *youtube.com/*
 // @grant        none
