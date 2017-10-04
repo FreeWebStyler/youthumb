@@ -161,7 +161,7 @@
             var $YouThumbButton = $('#YouThumbButton');
 
             try {
-                imgBase = location.href.split('?v=')[1];
+                imgBase = location.href.split('v=')[1];
                 if(imgBase.indexOf('&') !== -1) imgBase = imgBase.split('&')[0];
                 imgBase = 'https://i.ytimg.com/vi/' + imgBase + '/';
             }
