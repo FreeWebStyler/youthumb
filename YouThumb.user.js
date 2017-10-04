@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouThumb! YouTube thumbnails showing
 // @namespace    www.youtube.com/watch.youthumb
-// @version      1.6.3
+// @version      1.6.4
 // @license      GPLv2
 // @description  Show YouTube thumbnail picture by button, near likes buttons.
 // @author       FreeStyler
